@@ -7,7 +7,6 @@ export const CustomInput: React.FC<InputProps> = (props) => {
     <Input
       focusBorderColor="baianBlue"
       size="lg"
-      color="gray.600"
       {...props}
     />
   )

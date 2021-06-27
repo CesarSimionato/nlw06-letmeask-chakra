@@ -1,16 +1,47 @@
-import React from "react"
+import React, { FormEvent, useState } from "react"
 
-import { Flex, Image, Text } from "@chakra-ui/react"
+import { Flex, Image, Text, useColorModeValue } from "@chakra-ui/react"
 
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 
-import logoImg from "../assets/images/logo.svg"
+import logoLightImg from "../assets/images/logoLight.svg"
+import logoDarkImg from "../assets/images/logoDark.svg"
 
 import { CustomButton } from "../components/CustomButton"
 import { CustomInput } from "../components/CustomInput"
 import { Aside } from "../components/Aside"
+import { useAuth } from "../hooks/useAuth"
+import { database } from "../services/firebase"
 
 export const NewRoom = () => {
+
+  const colorMode = useColorModeValue("light", "dark")
+
+  const history = useHistory()
+
+  const { user } = useAuth()
+
+  const [newRoom, setNewRoom] = useState('')
+  const [roomDescription, setRoomDescription] = useState('')
+
+  const handleCreateRoom = async (event: FormEvent) => {
+    event.preventDefault()
+
+    if (newRoom.trim() === '') {
+      return
+    }
+
+    const roomRef = database.ref('rooms')
+
+    const firebaseRoom = await roomRef.push({
+      title: newRoom.trim(),
+      description: roomDescription.trim(),
+      authorId: user?.id
+    })
+
+    history.push(`/admin/rooms/${firebaseRoom.key}`)
+  }
+
   return (
     <Flex
       h="100vh"
@@ -31,22 +62,26 @@ export const NewRoom = () => {
           textAlign="center"
         >
           <Image
-            src={logoImg}
+            src={colorMode === "light" ? logoLightImg : logoDarkImg}
             alt="Letmeask"
             alignSelf="center"
             mb="8"
           />
 
-          <form>
+          <form onSubmit={handleCreateRoom}>
             <CustomInput
               placeholder="Nome da sala"
               mb="4"
+              value={newRoom}
+              onChange={event => setNewRoom(event.target.value)}
             />
             <CustomInput
               placeholder="Descrição da Sala (Opcional)"
               mb="6"
+              value={roomDescription}
+              onChange={event => setRoomDescription(event.target.value)}
             />
-            <CustomButton>
+            <CustomButton type="submit">
               Criar sala
             </CustomButton>
           </form>

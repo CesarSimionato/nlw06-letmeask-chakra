@@ -1,10 +1,13 @@
 import React from "react"
 
-import { Box, Image, Heading, Text } from "@chakra-ui/react"
+import { Box, Image, Heading, Text, useColorModeValue } from "@chakra-ui/react"
 
 import illustrationImg from "../../assets/images/illustration.svg"
 
 export const Aside = () => {
+
+  const colorMode = useColorModeValue("light", "dark")
+
   return (
     <Box
       bg="baianBlue"
@@ -17,14 +20,14 @@ export const Aside = () => {
       />
       <Heading
         mt="4"
-        color="white"
+        color={colorMode === "light" ? "white" : "gray.900"}
       >
         Crie salas de Q&amp;A ao-vivo
       </Heading>
       <Text
         mt="2"
         fontSize="larger"
-        color="white"
+        color={colorMode === "light" ? "white" : "gray.900"}
       >
         Tire dúvidas da sua audiência em tempo-real
       </Text>
